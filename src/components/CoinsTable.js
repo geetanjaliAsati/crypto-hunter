@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Pagination from "@material-ui/lab/Pagination";
 import {
@@ -16,8 +16,6 @@ import {
   Table,
   Paper,
 } from "@material-ui/core";
-import axios from "axios";
-import { CoinList } from "../config/api";
 import { useHistory } from "react-router-dom";
 import { CryptoState } from "../CryptoContext";
 
@@ -26,12 +24,10 @@ export function numberWithCommas(x) {
 }
 
 export default function CoinsTable() {
-  const [coins, setCoins] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  const { currency, symbol } = CryptoState();
+  const { symbol, coins, loading } = CryptoState();
 
   const useStyles = makeStyles({
     row: {
@@ -44,7 +40,7 @@ export default function CoinsTable() {
     },
     pagination: {
       "& .MuiPaginationItem-root": {
-        color: "gold",
+        color: "white",
       },
     },
   });
@@ -60,20 +56,6 @@ export default function CoinsTable() {
       type: "dark",
     },
   });
-
-  const fetchCoins = async () => {
-    setLoading(true);
-    const { data } = await axios.get(CoinList(currency));
-    console.log(data);
-
-    setCoins(data);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchCoins();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currency]);
 
   const handleSearch = () => {
     return coins.filter(
@@ -113,7 +95,7 @@ export default function CoinsTable() {
                         fontFamily: "Montserrat",
                       }}
                       key={head}
-                      align={head === "Coin" ? "" : "right"}
+                      align={head === "Coin" ? "left" : "left"}
                     >
                       {head}
                     </TableCell>
@@ -143,7 +125,7 @@ export default function CoinsTable() {
                           <img
                             src={row?.image}
                             alt={row.name}
-                            height="50"
+                            height="40"
                             style={{ marginBottom: 10 }}
                           />
                           <div
@@ -162,12 +144,12 @@ export default function CoinsTable() {
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell align="right">
+                        <TableCell align="left">
                           {symbol}{" "}
                           {numberWithCommas(row.current_price.toFixed(2))}
                         </TableCell>
                         <TableCell
-                          align="right"
+                          align="left"
                           style={{
                             color: profit > 0 ? "rgb(14, 203, 129)" : "red",
                             fontWeight: 500,
@@ -176,7 +158,7 @@ export default function CoinsTable() {
                           {profit && "+"}
                           {row.price_change_percentage_24h.toFixed(2)}%
                         </TableCell>
-                        <TableCell align="right">
+                        <TableCell align="left">
                           {symbol}{" "}
                           {numberWithCommas(
                             row.market_cap.toString().slice(0, -6)
@@ -193,7 +175,7 @@ export default function CoinsTable() {
 
         {/* Comes from @material-ui/lab */}
         <Pagination
-          count={(handleSearch()?.length / 10).toFixed(0)}
+          count={parseInt((handleSearch()?.length / 10).toFixed(0))}
           style={{
             padding: 20,
             width: "100%",

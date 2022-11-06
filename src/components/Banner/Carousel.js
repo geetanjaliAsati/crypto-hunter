@@ -14,7 +14,6 @@ const Carousel = () => {
   const fetchTrendingCoins = async () => {
     const { data } = await axios.get(TrendingCoins(currency));
 
-    console.log(data);
     setTrending(data);
   };
 
@@ -87,7 +86,7 @@ const Carousel = () => {
         mouseTracking
         infinite
         autoPlayInterval={1000}
-        animationDuration={1500}
+        animationDuration={1100}
         disableDotsControls
         disableButtonsControls
         responsive={responsive}
